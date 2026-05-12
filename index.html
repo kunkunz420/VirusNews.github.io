@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MV Hondius 汉坦病毒事件时间线</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* 默认深色变量 */
+    --bg: #0d0f14;
+    --bg2: #13161e;
+    --bg3: #1a1e28;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #e8e6df;
+    --text2: #9b9890;
+    --text3: #5e5c57;
+    --accent: #c9a96e;
+    --accent2: #8b6f47;
+
+    --c-red: #c0453a;
+    --c-red-bg: rgba(192,69,58,0.12);
+    --c-red-border: rgba(192,69,58,0.25);
+    --c-red-tag: rgba(192,69,58,0.2);
+    --c-red-tag-text: #e87a6e;
+    --c-red-date: #c47870;
+
+    --c-amber: #b87c2a;
+    --c-amber-bg: rgba(184,124,42,0.10);
+    --c-amber-border: rgba(184,124,42,0.22);
+    --c-amber-tag: rgba(184,124,42,0.2);
+    --c-amber-tag-text: #e0a050;
+    --c-amber-date: #c49050;
+
+    --c-blue: #2e6fad;
+    --c-blue-bg: rgba(46,111,173,0.10);
+    --c-blue-border: rgba(46,111,173,0.22);
+    --c-blue-tag: rgba(46,111,173,0.2);
+    --c-blue-tag-text: #6bacd8;
+    --c-blue-date: #5898c8;
+
+    --c-green: #3a7c4f;
+    --c-green-bg: rgba(58,124,79,0.10);
+    --c-green-border: rgba(58,124,79,0.22);
+    --c-green-tag: rgba(58,124,79,0.2);
+    --c-green-tag-text: #6cbd89;
+    --c-green-date: #58a870;
+
+    --c-purple: #6a4f9e;
+    --c-purple-bg: rgba(106,79,158,0.10);
+    --c-purple-border: rgba(106,79,158,0.22);
+    --c-purple-tag: rgba(106,79,158,0.2);
+    --c-purple-tag-text: #a080d8;
+    --c-purple-date: #8878c0;
+  }
+
+  /* 强制浅色主题变量 */
+  :root[data-theme="light"] {
+    --bg: #f8f7f4;
+    --bg2: #ffffff;
+    --bg3: #f0efe9;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.14);
+    --text: #2b2a28;
+    --text2: #696763;
+    --text3: #8a8882;
+    --accent: #b08d51;
+    --accent2: #8b6f47;
+
+    --c-red-bg: rgba(192,69,58,0.08);
+    --c-red-tag-text: #b83a2e;
+    --c-red-date: #bd4033;
+
+    --c-amber-bg: rgba(184,124,42,0.08);
+    --c-amber-tag-text: #ad6f18;
+    --c-amber-date: #a36512;
+
+    --c-blue-bg: rgba(46,111,173,0.08);
+    --c-blue-tag-text: #25609c;
+    --c-blue-date: #29649c;
+
+    --c-green-bg: rgba(58,124,79,0.08);
+    --c-green-tag-text: #2d6b41;
+    --c-green-date: #297040;
+
+    --c-purple-bg: rgba(106,79,158,0.08);
+    --c-purple-tag-text: #5b418c;
+    --c-purple-date: #584085;
+  }
+
+  /* 跟随系统浅色模式（且没有强制深色时） */
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f8f7f4;
+      --bg2: #ffffff;
+      --bg3: #f0efe9;
+      --border: rgba(0,0,0,0.08);
+      --border2: rgba(0,0,0,0.14);
+      --text: #2b2a28;
+      --text2: #696763;
+      --text3: #8a8882;
+      --accent: #b08d51;
+      --accent2: #8b6f47;
+
+      --c-red-bg: rgba(192,69,58,0.08);
+      --c-red-tag-text: #b83a2e;
+      --c-red-date: #bd4033;
+
+      --c-amber-bg: rgba(184,124,42,0.08);
+      --c-amber-tag-text: #ad6f18;
+      --c-amber-date: #a36512;
+
+      --c-blue-bg: rgba(46,111,173,0.08);
+      --c-blue-tag-text: #25609c;
+      --c-blue-date: #29649c;
+
+      --c-green-bg: rgba(58,124,79,0.08);
+      --c-green-tag-text: #2d6b41;
+      --c-green-date: #297040;
+
+      --c-purple-bg: rgba(106,79,158,0.08);
+      --c-purple-tag-text: #5b418c;
+      --c-purple-date: #584085;
+    }
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 300;
+    line-height: 1.8;
+    min-height: 100vh;
+    /* 全局过渡动画，让切换更丝滑 */
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 60px 32px 100px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Theme Switcher */
+  .theme-toggle {
+    position: absolute;
+    top: 60px;
+    right: 32px;
+    display: flex;
+    gap: 4px;
+    background: var(--bg2);
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    z-index: 10;
+    transition: background-color 0.4s ease, border-color 0.4s ease;
+  }
+
+  .th-btn {
+    background: transparent;
+    border: none;
+    color: var(--text3);
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .th-btn:hover {
+    color: var(--text);
+    background: var(--border);
+  }
+
+  .th-btn.active {
+    color: var(--accent);
+    background: var(--border2);
+  }
+
+  /* Header */
+  .header {
+    margin-bottom: 64px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+    animation: fadeUp 0.7s ease both;
+    transition: border-color 0.4s ease;
+  }
+
+  .header-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .header-eyebrow::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  .header h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: clamp(26px, 4vw, 38px);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .header h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .header-meta {
+    font-size: 13px;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .header-meta span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .header-meta span::before {
+    content: '·';
+    color: var(--accent2);
+  }
+
+  /* Phase headers */
+  .phase {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 52px 0 28px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .phase-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+    transition: background-color 0.4s ease, border-color 0.4s ease;
+  }
+
+  .phase-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text3);
+  }
+
+  .phase-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    transition: background-color 0.4s ease;
+  }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 148px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--border2) 5%, var(--border2) 95%, transparent);
+  }
+
+  .tl-item {
+    display: flex;
+    gap: 0;
+    margin-bottom: 4px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .tl-date-col {
+    width: 148px;
+    flex-shrink: 0;
+    text-align: right;
+    padding: 18px 20px 18px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+  }
+
+  .tl-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.5;
+    transition: color 0.4s ease;
+  }
+
+  .tl-node-col {
+    width: 1px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .tl-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-top: 22px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 0 0 3px var(--bg);
+    transition: background-color 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  .tl-content {
+    flex: 1;
+    padding: 10px 0 28px 28px;
+  }
+
+  .tl-card {
+    border-radius: 10px;
+    border: 1px solid;
+    padding: 16px 20px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.4s ease, border-color 0.4s ease;
+    cursor: default;
+  }
+
+  .tl-card:hover {
+    transform: translateX(3px);
+  }
+
+  .tl-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    padding: 2px 9px;
+    border-radius: 20px;
+    margin-bottom: 9px;
+    text-transform: uppercase;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  .tl-card-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 9px;
+    color: var(--text);
+  }
+
+  .tl-card-body {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.85;
+  }
+
+  /* Color themes */
+  .t-red .tl-dot { background: var(--c-red); }
+  .t-red .tl-card { background: var(--c-red-bg); border-color: var(--c-red-border); }
+  .t-red .tl-card:hover { box-shadow: 0 4px 24px var(--c-red-bg); }
+  .t-red .tl-tag { background: var(--c-red-tag); color: var(--c-red-tag-text); }
+  .t-red .tl-date { color: var(--c-red-date); }
+
+  .t-amber .tl-dot { background: var(--c-amber); }
+  .t-amber .tl-card { background: var(--c-amber-bg); border-color: var(--c-amber-border); }
+  .t-amber .tl-card:hover { box-shadow: 0 4px 24px var(--c-amber-bg); }
+  .t-amber .tl-tag { background: var(--c-amber-tag); color: var(--c-amber-tag-text); }
+  .t-amber .tl-date { color: var(--c-amber-date); }
+
+  .t-blue .tl-dot { background: var(--c-blue); }
+  .t-blue .tl-card { background: var(--c-blue-bg); border-color: var(--c-blue-border); }
+  .t-blue .tl-card:hover { box-shadow: 0 4px 24px var(--c-blue-bg); }
+  .t-blue .tl-tag { background: var(--c-blue-tag); color: var(--c-blue-tag-text); }
+  .t-blue .tl-date { color: var(--c-blue-date); }
+
+  .t-green .tl-dot { background: var(--c-green); }
+  .t-green .tl-card { background: var(--c-green-bg); border-color: var(--c-green-border); }
+  .t-green .tl-card:hover { box-shadow: 0 4px 24px var(--c-green-bg); }
+  .t-green .tl-tag { background: var(--c-green-tag); color: var(--c-green-tag-text); }
+  .t-green .tl-date { color: var(--c-green-date); }
+
+  .t-purple .tl-dot { background: var(--c-purple); }
+  .t-purple .tl-card { background: var(--c-purple-bg); border-color: var(--c-purple-border); }
+  .t-purple .tl-card:hover { box-shadow: 0 4px 24px var(--c-purple-bg); }
+  .t-purple .tl-tag { background: var(--c-purple-tag); color: var(--c-purple-tag-text); }
+  .t-purple .tl-date { color: var(--c-purple-date); }
+
+  /* Phase icon colors */
+  .pi-red { background: var(--c-red-bg); border: 1px solid var(--c-red-border); }
+  .pi-amber { background: var(--c-amber-bg); border: 1px solid var(--c-amber-border); }
+  .pi-blue { background: var(--c-blue-bg); border: 1px solid var(--c-blue-border); }
+  .pi-green { background: var(--c-green-bg); border: 1px solid var(--c-green-border); }
+  .pi-purple { background: var(--c-purple-bg); border: 1px solid var(--c-purple-border); }
+
+  /* Summary footer */
+  .summary {
+    margin-top: 64px;
+    padding: 28px 32px;
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    background: var(--bg2);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    animation: fadeUp 0.6s ease both;
+    transition: background-color 0.4s ease, border-color 0.4s ease;
+  }
+
+  .summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .summary-num {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .summary-label {
+    font-size: 12px;
+    color: var(--text3);
+    line-height: 1.5;
+  }
+
+  .summary-divider {
+    width: 1px;
+    background: var(--border);
+    grid-row: 1;
+    transition: background-color 0.4s ease;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .tl-item:nth-child(1) { animation-delay: 0.05s; }
+  .tl-item:nth-child(2) { animation-delay: 0.10s; }
+  .tl-item:nth-child(3) { animation-delay: 0.15s; }
+  .tl-item:nth-child(4) { animation-delay: 0.20s; }
+  .tl-item:nth-child(5) { animation-delay: 0.25s; }
+  .tl-item:nth-child(6) { animation-delay: 0.30s; }
+  .tl-item:nth-child(7) { animation-delay: 0.35s; }
+  .tl-item:nth-child(8) { animation-delay: 0.40s; }
+  .tl-item:nth-child(9) { animation-delay: 0.45s; }
+  .tl-item:nth-child(10) { animation-delay: 0.50s; }
+  .tl-item:nth-child(11) { animation-delay: 0.55s; }
+  .tl-item:nth-child(12) { animation-delay: 0.60s; }
+
+  @media (max-width: 600px) {
+    .container { padding: 40px 20px 80px; }
+    .timeline::before { left: 0; }
+    .tl-date-col { display: none; }
+    .tl-node-col { display: none; }
+    .tl-content { padding: 0 0 24px 0; }
+    .summary { grid-template-columns: 1fr; }
+    .summary-divider { display: none; }
+    .theme-toggle { top: 32px; right: 20px; }
+    .header { margin-top: 40px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="theme-toggle">
+    <button class="th-btn" data-theme-val="system" title="跟随系统">
+      <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+    </button>
+    <button class="th-btn" data-theme-val="light" title="浅色模式">
+      <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+    </button>
+    <button class="th-btn" data-theme-val="dark" title="深色模式">
+      <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
+  </div>
+
+  <div class="header">
+    <div class="header-eyebrow">病毒疫情追踪报告</div>
+    <h1>MV Hondius 号<br><em>汉坦病毒</em>事件时间线</h1>
+    <div class="header-meta">
+      <span>2026年4月下旬 — 5月12日</span>
+      <span>汉坦病毒·安第斯株</span>
+      <span>20份来源综合整理</span>
+    </div>
+  </div>
+
+  <div class="phase" style="animation-delay:0.1s">
+    <div class="phase-icon pi-red">🔴</div>
+    <div class="phase-label">疫情暴发期</div>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item t-red">
+      <div class="tl-date-col"><div class="tl-date">4月下旬<br>（日期未公开）</div></div>
+      <div class="tl-node-col"><div class="tl-dot"></div></div>
+      <div class="tl-content">
+        <div class="tl-card">
+          <div class="tl-tag">疫情起点</div>
+          <div class="tl-card-title">MV Hondius 号邮轮出现首批病例</div>
+          <div class="tl-card-body">荷兰籍探险邮轮 MV Hondius 从阿根廷火地岛乌斯怀亚启航。船上陆续出现疑似汉坦病毒（安第斯株）感染病例。病毒来源至今未明——阿根廷官方后来排除了乌斯怀亚为源头，新假说指向巴塔哥尼亚北部，该地区距乌斯怀亚约1500公里，与智利共同检出安第斯株。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item t-red">
+      <div class="tl-date-col"><div class="tl-date">4月24日</div></div>
+      <div class="tl-node-col"><div class="tl-dot"></div></div>
+      <div class="tl-content">
+        <div class="tl-card">
+          <div class="tl-tag">首例死亡</div>
+          <div class="tl-card-title">第一名乘客（荷兰籍，70岁）死亡</div>
+          <div class="tl-card-body">遗体在圣赫勒拿岛（Saint Helena）港口下船。此时船上医疗条件极为有限，仅有一名医生与小型医务室，严重病例须撤离至岸上医院。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item t-red">
+      <div class="tl-date-col"><div class="tl-date">4月27日</div></div>
+      <div class="tl-node-col"><div class="tl-dot"></div></div>
+      <div class="tl-content">
+        <div class="tl-card">
+          <div class="tl-tag">第二例死亡</div>
+          <div class="tl-card-title">一名乘客病危，紧急撤离南非后不治</div>
+          <div class="tl-card-body">因病情急剧恶化，该乘客被紧急转运至南非医院救治，但最终仍不治身亡。此为时间序列中第二例死亡。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase" style="animation-delay:0.15s">
+    <div class="phase-icon pi-amber">🟠</div>
+    <div class="phase-label">国际应对期</div>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item t-amber">
+      <div class="tl-date-col"><div class="tl-date">5月2日前后</div></div>
+      <div class="tl-node-col"><div class="tl-dot"></div></div>
+      <div class="tl-content">
+        <div class="tl-card">
+          <div class="tl-tag">第三例死亡</div>
+          <div class="tl-card-title">第三名乘客（德国籍，80岁）在船上死亡</div>
+          <div class="tl-card-body">累计3人死亡。遗体随船继续航行，未在中途港口下船，计划运至荷兰鹿特丹。WHO 确认新增病例，疫情已构成国际关注的公共卫生事件。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item t-amber">
+      <div class="tl-date-col"><div class="tl-date">5月初<br>（日期未明）</div></div>
+      <div class="tl-node-col"><div class="tl-dot"></div></div>
+      <div class="tl-content">
+        <div class="tl-card">
+          <div class="tl-tag">首批检测与撤离</div>
+          <div class="tl-card-title">佛得角（Cabo Verde）：首次开展 PCR 检测</div>
+          <div class="tl-card-body">船上此前无技术条件进行大规模筛查。检测于佛得角开始，仅针对高风险密切接触者及三名有症状乘客。无症状乘客继续随船航行；有症状者及密接者被疏散上岸。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase" style="animation-delay:0.2s">
+    <div class="phase-icon pi-blue">🔵</div>
+    <div class="phase-label">西班牙协调撤离期</div>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item t-blue">
+      <div class="tl-date-col"><div class="tl-date">5月6日<br>「零日」</div></div>
+      <div class="tl-node-col"><div class="tl-dot"></div></div>
+      <div class="tl-content">
+        <div class="tl-card">
+          <div class="tl-tag">隔离起算</div>
+          <div class="tl-card-title">西班牙将5月6日定为接触追踪「零日」</div>
+          <div class="tl-card-body">西班牙卫生部、WHO、ECDC 及西班牙警报与卫生应急协调中心联合确定 <strong style="color:var(--text);font-weight:500">42天</strong> 医学观察期，自此日起算。加那利群岛主席克拉维霍强烈反对邮轮靠港，声称自治区无法接受。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item t-blue">
+      <div class="tl-date-col"><div class="tl-date">5月7日前后</div></div>
+      <div class="tl-node-col"><div class="tl-dot"></div></div>
+      <div class="tl-content">
+        <div class="tl-card">
+          <div class="tl-tag">政治冲突</div>
+          <div class="tl-card-title">加那利群岛与中央政府产生严重分歧</div>
+          <div class="tl-card-body">克拉维霍要求禁止邮轮靠港，担忧船上鼠类可能上岸传播病毒。港口工人罢工威胁浮现。西班牙首相桑切斯亲自致电克拉维霍协调。卫生部提交书面报告明确：船上经检查无鼠，且鼠类无法游泳登陆，WHO 及六位独立专家均证实此结论。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item t-blue">
+      <div class="tl-date-col"><div class="tl-date">5月9日<br>（周六）</div></div>
+      <div class="tl-node-col"><div class="tl-dot"></div></div>
+      <div class="tl-content">
+        <div class="tl-card">
+          <div class="tl-tag">港口备港</div>
+          <div class="tl-card-title">格拉纳迪亚港开始备港；14名西班牙乘客优先撤离</div>
+          <div class="tl-card-body">邮轮计划于周日凌晨抵达，在海岸外锚泊，通过小艇转运乘客。14名西班牙乘客由军用飞机率先撤至马德里戈麦斯·乌拉（Gómez Ulla）国防医院，均无症状，纳入42天隔离观察。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item t-blue">
+      <div class="tl-date-col"><div class="tl-date">5月10日<br>（周日）</div></div>
+      <div class="tl-node-col"><div class="tl-dot"></div></div>
+      <div class="tl-content">
+        <div class="tl-card">
+          <div class="tl-tag">大规模撤离 · 新增确诊</div>
+          <div class="tl-card-title">西班牙启动欧盟民事保护机制；94人完成撤离</div>
+          <div class="tl-card-body">西班牙向欧盟请求启动民事保护机制（ERCC），EU承担75%费用。截至当日，152名在船人员中已有94人完成撤离。<br><br>
+          · 法国：5名撤离乘客中1名女性在飞机上出现症状，症状夜间恶化，抵达巴黎后确诊阳性；另4名检测阴性，22名密接者须隔离。<br>
+          · 美国：17名撤离公民中1人检测弱阳性，另1人轻微症状；两人均在飞机生物隔离单元中转运至内布拉斯加大学医学中心。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase" style="animation-delay:0.25s">
+    <div class="phase-icon pi-green">🟢</div>
+    <div class="phase-label">收尾期</div>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item t-green">
+      <div class="tl-date-col"><div class="tl-date">5月11日<br>凌晨—上午</div></div>
+      <div class="tl-node-col"><div class="tl-dot"></div></div>
+      <div class="tl-content">
+        <div class="tl-card">
+          <div class="tl-tag">强制靠港</div>
+          <div class="tl-card-title">因恶劣天气，中央政府下令强制靠港</div>
+          <div class="tl-card-body">原计划锚地小艇转运，因海况恶劣无法安全执行。西班牙商船总局以「船上需医疗援助及天气安全风险」为由强制靠泊。克拉维霍服从中央决定。澳大利亚包机因技术故障取消，改由荷兰包机合并接走22名乘客（含澳大利亚、新西兰、英国公民）。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item t-green">
+      <div class="tl-date-col"><div class="tl-date">5月11日<br>下午</div></div>
+      <div class="tl-node-col"><div class="tl-dot"></div></div>
+      <div class="tl-content">
+        <div class="tl-card">
+          <div class="tl-tag">西班牙首例阳性</div>
+          <div class="tl-card-title">西班牙 PCR 阳性确认；阿根廷排除乌斯怀亚起源</div>
+          <div class="tl-card-body">送往戈麦斯·乌拉医院的14名西班牙人中，1人首次 PCR 检测结果为汉坦病毒阳性（暂定）。同日，阿根廷官方基于潜伏期与停留时间等流行病学证据，正式排除火地岛乌斯怀亚为疫情源头。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item t-green">
+      <div class="tl-date-col"><div class="tl-date">5月11日<br>晚间</div></div>
+      <div class="tl-node-col"><div class="tl-dot"></div></div>
+      <div class="tl-content">
+        <div class="tl-card">
+          <div class="tl-tag">撤离完成</div>
+          <div class="tl-card-title">「任务完成」——最后28名乘客下船，邮轮驶离</div>
+          <div class="tl-card-body">全部122名乘客（87名乘客 + 35名船员）撤离完毕，分散至超过23个国家各自回国。邮轮携带27名留守船员及1名WHO医生，驶往荷兰鹿特丹进行彻底消毒。格拉纳迪亚港区同步清洁。西班牙首相宣布5月26日将与WHO总干事谭德塞召开新闻发布会。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase" style="animation-delay:0.3s">
+    <div class="phase-icon pi-purple">🟣</div>
+    <div class="phase-label">持续监测期（进行中）</div>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item t-purple">
+      <div class="tl-date-col"><div class="tl-date">5月12日</div></div>
+      <div class="tl-node-col"><div class="tl-dot"></div></div>
+      <div class="tl-content">
+        <div class="tl-card">
+          <div class="tl-tag">新增阳性 · 国际回应</div>
+          <div class="tl-card-title">新增3例检测阳性，WHO定性为“有限爆发”</div>
+          <div class="tl-card-body">随着最后一批乘客离开邮轮，又有3人检测呈阳性。早期报道中已有5例确诊（至少8人患病），病例数据仍在持续动态变化。世界卫生组织（WHO）明确重申，此次聚集性疫情是特定邮轮上的“有限爆发”，并非“另一个COVID-19”，且全球广泛传播的风险极低。各国卫生当局正竞相追踪接触者，例如已有17名美国乘客在内布拉斯加州进行隔离。</div>
+        </div>
+      </div>
+    </div>
+      
+    <div class="tl-item t-purple">
+      <div class="tl-date-col"><div class="tl-date">5月12日之后<br>（持续）</div></div>
+      <div class="tl-node-col"><div class="tl-dot"></div></div>
+      <div class="tl-content">
+        <div class="tl-card">
+          <div class="tl-tag">长期追踪</div>
+          <div class="tl-card-title">多国进入长期医学观察阶段</div>
+          <div class="tl-card-body">各国对撤离人员实施隔离观察（西班牙：42天；其余国家：建议至少21天）。汉坦病毒安第斯株最长潜伏期可达45天，后续可能持续出现新确诊病例。由于安第斯病毒是已知唯一能通过人际传播的汉坦病毒株，这增加了防范难度。病毒溯源及传播链条仍需科学确认。WHO 与各国继续信息共享与流行病学追踪。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary">
+    <div class="summary-item">
+      <div class="summary-num">3</div>
+      <div class="summary-label">确认死亡人数<br>（荷兰籍、不明、德国籍）</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-num">122</div>
+      <div class="summary-label">成功撤离人员<br>（87名乘客 + 35名船员）</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-num">23+</div>
+      <div class="summary-label">涉及国家<br>（含法国、美国、西班牙等）</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const themeBtns = document.querySelectorAll('.th-btn');
+  const root = document.documentElement;
+
+  function setTheme(theme) {
+    if (theme === 'system') {
+      root.removeAttribute('data-theme');
+      localStorage.removeItem('theme');
+    } else {
+      root.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+    }
+    
+    // 更新按钮激活状态
+    themeBtns.forEach(btn => {
+      if (btn.getAttribute('data-theme-val') === theme) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+
+  // 初始化（读取本地存储或默认跟随系统）
+  const savedTheme = localStorage.getItem('theme') || 'system';
+  setTheme(savedTheme);
+
+  // 绑定点击事件
+  themeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      setTheme(btn.getAttribute('data-theme-val'));
+    });
+  });
+</script>
+</body>
+</html>
