@@ -158,7 +158,7 @@
     z-index: 1;
   }
 
-  /* Theme Switcher */
+  /* Theme Switcher — fixed & enhanced */
   .theme-toggle {
     position: absolute;
     top: 60px;
@@ -166,25 +166,27 @@
     display: flex;
     gap: 4px;
     background: var(--bg2);
-    padding: 4px;
-    border-radius: 8px;
+    padding: 5px;
+    border-radius: 10px;
     border: 1px solid var(--border);
     z-index: 10;
     transition: background-color 0.4s ease, border-color 0.4s ease;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
   }
 
   .th-btn {
     background: transparent;
     border: none;
-    color: var(--text3);
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
+    color: var(--text2);
+    width: 34px;
+    height: 34px;
+    border-radius: 7px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
   }
 
   .th-btn:hover {
@@ -192,9 +194,15 @@
     background: var(--border);
   }
 
+  .th-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
   .th-btn.active {
     color: var(--accent);
     background: var(--border2);
+    box-shadow: 0 0 0 1px var(--accent2), 0 0 12px rgba(201,169,110,0.15);
   }
 
   /* Header */
@@ -368,11 +376,15 @@
     border: 1px solid;
     padding: 16px 20px;
     transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.4s ease, border-color 0.4s ease;
-    cursor: default;
   }
 
-  .tl-card:hover {
+  .tl-card[data-modal-index] {
+    cursor: pointer;
+  }
+
+  .tl-card[data-modal-index]:hover {
     transform: translateX(3px);
+    box-shadow: 0 4px 24px rgba(201,169,110,0.08);
   }
 
   .tl-tag {
@@ -459,6 +471,36 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
+    cursor: pointer;
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .summary-item:hover {
+    transform: translateY(-3px);
+    background: var(--border);
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+
+  .summary-item::after {
+    content: '点击查看详情 \u203a';
+    position: absolute;
+    bottom: 12px;
+    right: 16px;
+    font-size: 10px;
+    color: var(--accent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 400;
+  }
+
+  .summary-item:hover::after {
+    opacity: 0.8;
   }
 
   .summary-num {
@@ -480,6 +522,190 @@
     background: var(--border);
     grid-row: 1;
     transition: background-color 0.4s ease;
+  }
+
+  /* ===== Modal System ===== */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .modal-container {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    width: 100%;
+    max-width: 720px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+    transform: translateY(24px) scale(0.97);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .modal-overlay.active .modal-container {
+    transform: translateY(0) scale(1);
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    gap: 16px;
+  }
+
+  .modal-header-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .modal-phase {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .modal-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .modal-close {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .modal-close:hover {
+    color: var(--text);
+    background: var(--c-red-bg);
+    border-color: var(--c-red-border);
+  }
+
+  .modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+    scroll-behavior: smooth;
+  }
+
+  .modal-body::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .modal-body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .modal-body::-webkit-scrollbar-thumb {
+    background: var(--border2);
+    border-radius: 3px;
+  }
+
+  .modal-img {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    object-fit: cover;
+    max-height: 300px;
+    border: 1px solid var(--border);
+    display: block;
+  }
+
+  .modal-section {
+    margin-bottom: 20px;
+  }
+
+  .modal-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .modal-section h4 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+    padding-left: 12px;
+    border-left: 3px solid var(--accent);
+  }
+
+  .modal-section p {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.9;
+    margin-bottom: 8px;
+  }
+
+  .modal-section p:last-child {
+    margin-bottom: 0;
+  }
+
+  .modal-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-right: 6px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .modal-badge-red { background: var(--c-red-tag); color: var(--c-red-tag-text); }
+  .modal-badge-amber { background: var(--c-amber-tag); color: var(--c-amber-tag-text); }
+  .modal-badge-blue { background: var(--c-blue-tag); color: var(--c-blue-tag-text); }
+  .modal-badge-green { background: var(--c-green-tag); color: var(--c-green-tag-text); }
+  .modal-badge-purple { background: var(--c-purple-tag); color: var(--c-purple-tag-text); }
+
+  .modal-source {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text3);
+    line-height: 1.6;
   }
 
   /* Animations */
@@ -509,36 +735,45 @@
     .tl-content { padding: 0 0 24px 0; }
     .summary { grid-template-columns: 1fr; }
     .summary-divider { display: none; }
-    .theme-toggle { top: 32px; right: 20px; }
+    .theme-toggle { top: 40px; right: 20px; }
     .header { margin-top: 40px; }
+    /* Modal mobile */
+    .modal-overlay { padding: 12px; align-items: flex-end; }
+    .modal-container { max-height: 92vh; border-radius: 14px 14px 0 0; max-width: 100%; }
+    .modal-title { font-size: 16px; }
+    .modal-header { padding: 16px 20px 14px; }
+    .modal-body { padding: 20px; }
   }
 </style>
 </head>
 <body>
 <div class="container">
 
+  <!-- ===== Theme Toggle (fixed & enhanced) ===== -->
   <div class="theme-toggle">
     <button class="th-btn" data-theme-val="system" title="跟随系统">
-      <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+      <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
     </button>
     <button class="th-btn" data-theme-val="light" title="浅色模式">
-      <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
     </button>
     <button class="th-btn" data-theme-val="dark" title="深色模式">
-      <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
     </button>
   </div>
 
+  <!-- ===== Header ===== -->
   <div class="header">
     <div class="header-eyebrow">病毒疫情追踪报告</div>
     <h1>MV Hondius 号<br><em>汉坦病毒</em>事件时间线</h1>
     <div class="header-meta">
       <span>2026年4月下旬 — 5月12日</span>
       <span>汉坦病毒·安第斯株</span>
-      <span>20份来源综合整理</span>
+      <span>50份来源综合整理</span>
     </div>
   </div>
 
+  <!-- ===== Phase 1: 疫情暴发期 ===== -->
   <div class="phase" style="animation-delay:0.1s">
     <div class="phase-icon pi-red">🔴</div>
     <div class="phase-label">疫情暴发期</div>
@@ -546,11 +781,12 @@
   </div>
 
   <div class="timeline">
+    <!-- Card 1 -->
     <div class="tl-item t-red">
       <div class="tl-date-col"><div class="tl-date">4月下旬<br>（日期未公开）</div></div>
       <div class="tl-node-col"><div class="tl-dot"></div></div>
       <div class="tl-content">
-        <div class="tl-card">
+        <div class="tl-card" data-modal-index="0">
           <div class="tl-tag">疫情起点</div>
           <div class="tl-card-title">MV Hondius 号邮轮出现首批病例</div>
           <div class="tl-card-body">荷兰籍探险邮轮 MV Hondius 从阿根廷火地岛乌斯怀亚启航。船上陆续出现疑似汉坦病毒（安第斯株）感染病例。病毒来源至今未明——阿根廷官方后来排除了乌斯怀亚为源头，新假说指向巴塔哥尼亚北部，该地区距乌斯怀亚约1500公里，与智利共同检出安第斯株。</div>
@@ -558,11 +794,12 @@
       </div>
     </div>
 
+    <!-- Card 2 -->
     <div class="tl-item t-red">
       <div class="tl-date-col"><div class="tl-date">4月24日</div></div>
       <div class="tl-node-col"><div class="tl-dot"></div></div>
       <div class="tl-content">
-        <div class="tl-card">
+        <div class="tl-card" data-modal-index="1">
           <div class="tl-tag">首例死亡</div>
           <div class="tl-card-title">第一名乘客（荷兰籍，70岁）死亡</div>
           <div class="tl-card-body">遗体在圣赫勒拿岛（Saint Helena）港口下船。此时船上医疗条件极为有限，仅有一名医生与小型医务室，严重病例须撤离至岸上医院。</div>
@@ -570,11 +807,12 @@
       </div>
     </div>
 
+    <!-- Card 3 -->
     <div class="tl-item t-red">
       <div class="tl-date-col"><div class="tl-date">4月27日</div></div>
       <div class="tl-node-col"><div class="tl-dot"></div></div>
       <div class="tl-content">
-        <div class="tl-card">
+        <div class="tl-card" data-modal-index="2">
           <div class="tl-tag">第二例死亡</div>
           <div class="tl-card-title">一名乘客病危，紧急撤离南非后不治</div>
           <div class="tl-card-body">因病情急剧恶化，该乘客被紧急转运至南非医院救治，但最终仍不治身亡。此为时间序列中第二例死亡。</div>
@@ -583,6 +821,7 @@
     </div>
   </div>
 
+  <!-- ===== Phase 2: 国际应对期 ===== -->
   <div class="phase" style="animation-delay:0.15s">
     <div class="phase-icon pi-amber">🟠</div>
     <div class="phase-label">国际应对期</div>
@@ -590,11 +829,12 @@
   </div>
 
   <div class="timeline">
+    <!-- Card 4 -->
     <div class="tl-item t-amber">
       <div class="tl-date-col"><div class="tl-date">5月2日前后</div></div>
       <div class="tl-node-col"><div class="tl-dot"></div></div>
       <div class="tl-content">
-        <div class="tl-card">
+        <div class="tl-card" data-modal-index="3">
           <div class="tl-tag">第三例死亡</div>
           <div class="tl-card-title">第三名乘客（德国籍，80岁）在船上死亡</div>
           <div class="tl-card-body">累计3人死亡。遗体随船继续航行，未在中途港口下船，计划运至荷兰鹿特丹。WHO 确认新增病例，疫情已构成国际关注的公共卫生事件。</div>
@@ -602,11 +842,12 @@
       </div>
     </div>
 
+    <!-- Card 5 -->
     <div class="tl-item t-amber">
       <div class="tl-date-col"><div class="tl-date">5月初<br>（日期未明）</div></div>
       <div class="tl-node-col"><div class="tl-dot"></div></div>
       <div class="tl-content">
-        <div class="tl-card">
+        <div class="tl-card" data-modal-index="4">
           <div class="tl-tag">首批检测与撤离</div>
           <div class="tl-card-title">佛得角（Cabo Verde）：首次开展 PCR 检测</div>
           <div class="tl-card-body">船上此前无技术条件进行大规模筛查。检测于佛得角开始，仅针对高风险密切接触者及三名有症状乘客。无症状乘客继续随船航行；有症状者及密接者被疏散上岸。</div>
@@ -615,6 +856,7 @@
     </div>
   </div>
 
+  <!-- ===== Phase 3: 西班牙协调撤离期 ===== -->
   <div class="phase" style="animation-delay:0.2s">
     <div class="phase-icon pi-blue">🔵</div>
     <div class="phase-label">西班牙协调撤离期</div>
@@ -622,11 +864,12 @@
   </div>
 
   <div class="timeline">
+    <!-- Card 6 -->
     <div class="tl-item t-blue">
       <div class="tl-date-col"><div class="tl-date">5月6日<br>「零日」</div></div>
       <div class="tl-node-col"><div class="tl-dot"></div></div>
       <div class="tl-content">
-        <div class="tl-card">
+        <div class="tl-card" data-modal-index="5">
           <div class="tl-tag">隔离起算</div>
           <div class="tl-card-title">西班牙将5月6日定为接触追踪「零日」</div>
           <div class="tl-card-body">西班牙卫生部、WHO、ECDC 及西班牙警报与卫生应急协调中心联合确定 <strong style="color:var(--text);font-weight:500">42天</strong> 医学观察期，自此日起算。加那利群岛主席克拉维霍强烈反对邮轮靠港，声称自治区无法接受。</div>
@@ -634,11 +877,12 @@
       </div>
     </div>
 
+    <!-- Card 7 -->
     <div class="tl-item t-blue">
       <div class="tl-date-col"><div class="tl-date">5月7日前后</div></div>
       <div class="tl-node-col"><div class="tl-dot"></div></div>
       <div class="tl-content">
-        <div class="tl-card">
+        <div class="tl-card" data-modal-index="6">
           <div class="tl-tag">政治冲突</div>
           <div class="tl-card-title">加那利群岛与中央政府产生严重分歧</div>
           <div class="tl-card-body">克拉维霍要求禁止邮轮靠港，担忧船上鼠类可能上岸传播病毒。港口工人罢工威胁浮现。西班牙首相桑切斯亲自致电克拉维霍协调。卫生部提交书面报告明确：船上经检查无鼠，且鼠类无法游泳登陆，WHO 及六位独立专家均证实此结论。</div>
@@ -646,11 +890,12 @@
       </div>
     </div>
 
+    <!-- Card 8 -->
     <div class="tl-item t-blue">
       <div class="tl-date-col"><div class="tl-date">5月9日<br>（周六）</div></div>
       <div class="tl-node-col"><div class="tl-dot"></div></div>
       <div class="tl-content">
-        <div class="tl-card">
+        <div class="tl-card" data-modal-index="7">
           <div class="tl-tag">港口备港</div>
           <div class="tl-card-title">格拉纳迪亚港开始备港；14名西班牙乘客优先撤离</div>
           <div class="tl-card-body">邮轮计划于周日凌晨抵达，在海岸外锚泊，通过小艇转运乘客。14名西班牙乘客由军用飞机率先撤至马德里戈麦斯·乌拉（Gómez Ulla）国防医院，均无症状，纳入42天隔离观察。</div>
@@ -658,11 +903,12 @@
       </div>
     </div>
 
+    <!-- Card 9 -->
     <div class="tl-item t-blue">
       <div class="tl-date-col"><div class="tl-date">5月10日<br>（周日）</div></div>
       <div class="tl-node-col"><div class="tl-dot"></div></div>
       <div class="tl-content">
-        <div class="tl-card">
+        <div class="tl-card" data-modal-index="8">
           <div class="tl-tag">大规模撤离 · 新增确诊</div>
           <div class="tl-card-title">西班牙启动欧盟民事保护机制；94人完成撤离</div>
           <div class="tl-card-body">西班牙向欧盟请求启动民事保护机制（ERCC），EU承担75%费用。截至当日，152名在船人员中已有94人完成撤离。<br><br>
@@ -673,6 +919,7 @@
     </div>
   </div>
 
+  <!-- ===== Phase 4: 收尾期 ===== -->
   <div class="phase" style="animation-delay:0.25s">
     <div class="phase-icon pi-green">🟢</div>
     <div class="phase-label">收尾期</div>
@@ -680,11 +927,12 @@
   </div>
 
   <div class="timeline">
+    <!-- Card 10 -->
     <div class="tl-item t-green">
       <div class="tl-date-col"><div class="tl-date">5月11日<br>凌晨—上午</div></div>
       <div class="tl-node-col"><div class="tl-dot"></div></div>
       <div class="tl-content">
-        <div class="tl-card">
+        <div class="tl-card" data-modal-index="9">
           <div class="tl-tag">强制靠港</div>
           <div class="tl-card-title">因恶劣天气，中央政府下令强制靠港</div>
           <div class="tl-card-body">原计划锚地小艇转运，因海况恶劣无法安全执行。西班牙商船总局以「船上需医疗援助及天气安全风险」为由强制靠泊。克拉维霍服从中央决定。澳大利亚包机因技术故障取消，改由荷兰包机合并接走22名乘客（含澳大利亚、新西兰、英国公民）。</div>
@@ -692,11 +940,12 @@
       </div>
     </div>
 
+    <!-- Card 11 -->
     <div class="tl-item t-green">
       <div class="tl-date-col"><div class="tl-date">5月11日<br>下午</div></div>
       <div class="tl-node-col"><div class="tl-dot"></div></div>
       <div class="tl-content">
-        <div class="tl-card">
+        <div class="tl-card" data-modal-index="10">
           <div class="tl-tag">西班牙首例阳性</div>
           <div class="tl-card-title">西班牙 PCR 阳性确认；阿根廷排除乌斯怀亚起源</div>
           <div class="tl-card-body">送往戈麦斯·乌拉医院的14名西班牙人中，1人首次 PCR 检测结果为汉坦病毒阳性（暂定）。同日，阿根廷官方基于潜伏期与停留时间等流行病学证据，正式排除火地岛乌斯怀亚为疫情源头。</div>
@@ -704,11 +953,12 @@
       </div>
     </div>
 
+    <!-- Card 12 -->
     <div class="tl-item t-green">
       <div class="tl-date-col"><div class="tl-date">5月11日<br>晚间</div></div>
       <div class="tl-node-col"><div class="tl-dot"></div></div>
       <div class="tl-content">
-        <div class="tl-card">
+        <div class="tl-card" data-modal-index="11">
           <div class="tl-tag">撤离完成</div>
           <div class="tl-card-title">「任务完成」——最后28名乘客下船，邮轮驶离</div>
           <div class="tl-card-body">全部122名乘客（87名乘客 + 35名船员）撤离完毕，分散至超过23个国家各自回国。邮轮携带27名留守船员及1名WHO医生，驶往荷兰鹿特丹进行彻底消毒。格拉纳迪亚港区同步清洁。西班牙首相宣布5月26日将与WHO总干事谭德塞召开新闻发布会。</div>
@@ -717,6 +967,7 @@
     </div>
   </div>
 
+  <!-- ===== Phase 5: 持续监测期 ===== -->
   <div class="phase" style="animation-delay:0.3s">
     <div class="phase-icon pi-purple">🟣</div>
     <div class="phase-label">持续监测期（进行中）</div>
@@ -724,23 +975,25 @@
   </div>
 
   <div class="timeline">
+    <!-- Card 13 -->
     <div class="tl-item t-purple">
       <div class="tl-date-col"><div class="tl-date">5月12日</div></div>
       <div class="tl-node-col"><div class="tl-dot"></div></div>
       <div class="tl-content">
-        <div class="tl-card">
+        <div class="tl-card" data-modal-index="12">
           <div class="tl-tag">新增阳性 · 国际回应</div>
-          <div class="tl-card-title">新增3例检测阳性，WHO定性为“有限爆发”</div>
-          <div class="tl-card-body">随着最后一批乘客离开邮轮，又有3人检测呈阳性。早期报道中已有5例确诊（至少8人患病），病例数据仍在持续动态变化。世界卫生组织（WHO）明确重申，此次聚集性疫情是特定邮轮上的“有限爆发”，并非“另一个COVID-19”，且全球广泛传播的风险极低。各国卫生当局正竞相追踪接触者，例如已有17名美国乘客在内布拉斯加州进行隔离。</div>
+          <div class="tl-card-title">新增3例检测阳性，WHO定性为"有限爆发"</div>
+          <div class="tl-card-body">随着最后一批乘客离开邮轮，又有3人检测呈阳性。早期报道中已有5例确诊（至少8人患病），病例数据仍在持续动态变化。世界卫生组织（WHO）明确重申，此次聚集性疫情是特定邮轮上的"有限爆发"，并非"另一个COVID-19"，且全球广泛传播的风险极低。各国卫生当局正竞相追踪接触者，例如已有17名美国乘客在内布拉斯加州进行隔离。</div>
         </div>
       </div>
     </div>
       
+    <!-- Card 14 -->
     <div class="tl-item t-purple">
       <div class="tl-date-col"><div class="tl-date">5月12日之后<br>（持续）</div></div>
       <div class="tl-node-col"><div class="tl-dot"></div></div>
       <div class="tl-content">
-        <div class="tl-card">
+        <div class="tl-card" data-modal-index="13">
           <div class="tl-tag">长期追踪</div>
           <div class="tl-card-title">多国进入长期医学观察阶段</div>
           <div class="tl-card-body">各国对撤离人员实施隔离观察（西班牙：42天；其余国家：建议至少21天）。汉坦病毒安第斯株最长潜伏期可达45天，后续可能持续出现新确诊病例。由于安第斯病毒是已知唯一能通过人际传播的汉坦病毒株，这增加了防范难度。病毒溯源及传播链条仍需科学确认。WHO 与各国继续信息共享与流行病学追踪。</div>
@@ -749,24 +1002,43 @@
     </div>
   </div>
 
+  <!-- ===== Summary Footer ===== -->
   <div class="summary">
-    <div class="summary-item">
+    <div class="summary-item" data-modal-index="14">
       <div class="summary-num">3</div>
       <div class="summary-label">确认死亡人数<br>（荷兰籍、不明、德国籍）</div>
     </div>
-    <div class="summary-item">
+    <div class="summary-item" data-modal-index="15">
       <div class="summary-num">122</div>
       <div class="summary-label">成功撤离人员<br>（87名乘客 + 35名船员）</div>
     </div>
-    <div class="summary-item">
+    <div class="summary-item" data-modal-index="16">
       <div class="summary-num">23+</div>
       <div class="summary-label">涉及国家<br>（含法国、美国、西班牙等）</div>
     </div>
   </div>
 
+</div><!-- end .container -->
+
+<!-- ===== Modal Overlay ===== -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-container" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <div class="modal-header-info">
+        <div class="modal-phase" id="modal-phase"></div>
+        <div class="modal-title" id="modal-title"></div>
+      </div>
+      <button class="modal-close" id="modal-close" aria-label="关闭">&times;</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
 </div>
 
+<!-- ===== JavaScript ===== -->
 <script>
+  /* ============================================
+     Theme Toggle Logic (original, preserved)
+     ============================================ */
   const themeBtns = document.querySelectorAll('.th-btn');
   const root = document.documentElement;
 
@@ -779,7 +1051,6 @@
       localStorage.setItem('theme', theme);
     }
     
-    // 更新按钮激活状态
     themeBtns.forEach(btn => {
       if (btn.getAttribute('data-theme-val') === theme) {
         btn.classList.add('active');
@@ -789,14 +1060,600 @@
     });
   }
 
-  // 初始化（读取本地存储或默认跟随系统）
   const savedTheme = localStorage.getItem('theme') || 'system';
   setTheme(savedTheme);
 
-  // 绑定点击事件
   themeBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       setTheme(btn.getAttribute('data-theme-val'));
+    });
+  });
+
+  /* ============================================
+     Modal Logic (new, independent of theme toggle)
+     ============================================ */
+  const modalOverlay = document.getElementById('modal-overlay');
+  const modalPhase = document.getElementById('modal-phase');
+  const modalTitle = document.getElementById('modal-title');
+  const modalBody = document.getElementById('modal-body');
+  const modalClose = document.getElementById('modal-close');
+
+  // ===== Modal Content Database (14 entries mapped from 汉坦病毒情报报告) =====
+  const modalData = [
+    /* 0 — 4月下旬: 首批病例 / 疫情起点 */
+    {
+      phase: '疫情暴发期 · 第一阶段',
+      title: 'MV Hondius 号邮轮出现首批汉坦病毒感染病例',
+      image: 'https://images.unsplash.com/photo-1548574505-5e239809ee19?auto=format&fit=crop&w=800&q=80',
+      imageAlt: '邮轮航行于大西洋',
+      badges: [
+        { text: '安第斯病毒', cls: 'modal-badge-red' },
+        { text: '人际传播', cls: 'modal-badge-red' },
+        { text: '起源未明', cls: 'modal-badge-red' }
+      ],
+      sections: [
+        {
+          heading: '事件概况',
+          content: '荷兰籍探险邮轮 MV Hondius 号从阿根廷火地岛乌斯怀亚（Ushuaia）启航后，船上陆续出现疑似汉坦病毒（安第斯株 / Andes virus）感染病例。安第斯病毒是已知唯一能够通过人际传播的汉坦病毒株，这一特性使得此次疫情的防控难度远超普通汉坦病毒暴发。'
+        },
+        {
+          heading: '病毒溯源进展',
+          content: '病毒来源至今未明。阿根廷官方基于潜伏期与停留时间等流行病学证据，已正式排除火地岛乌斯怀亚为疫情源头。新假说指向巴塔哥尼亚（Patagonia）北部地区，该地区距乌斯怀亚约1500公里，与智利共同检出安第斯株。WHO、CDC及多国卫生机构仍在进行病毒溯源及传播链条的确认工作。'
+        },
+        {
+          heading: '传播途径分析',
+          content: '汉坦病毒通常通过接触受感染啮齿动物的尿液、粪便或唾液，或吸入被其污染的尘埃传播。但安第斯病毒的特殊之处在于可在人与人之间传播，主要通过密切接触感染者的呼吸道分泌物。此次邮轮上出现的聚集性病例引发了国际社会对"有限空间内人际传播效率"的高度关注。'
+        }
+      ],
+      source: '信息来源：CIDRAP、WHO、BBC、CNN、CBS News、NBC News 等'
+    },
+
+    /* 1 — 4月24日: 首例死亡 */
+    {
+      phase: '疫情暴发期 · 死亡病例',
+      title: '第一名乘客死亡：荷兰籍70岁男性',
+      image: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=800&q=80',
+      imageAlt: '医疗实验室检测',
+      badges: [
+        { text: '首例死亡', cls: 'modal-badge-red' },
+        { text: '圣赫勒拿岛', cls: 'modal-badge-red' },
+        { text: '医疗条件有限', cls: 'modal-badge-red' }
+      ],
+      sections: [
+        {
+          heading: '死亡详情',
+          content: '第一名死亡乘客为荷兰籍，70岁男性。遗体在圣赫勒拿岛（Saint Helena）港口下船。圣赫勒拿岛是位于南大西洋的英国海外领土，以拿破仑的流放地而闻名，岛上医疗资源有限。此次事件中，遗体被妥善安置后下船，船上疫情态势进一步引发担忧。'
+        },
+        {
+          heading: '船上医疗条件',
+          content: 'MV Hondius 号作为探险邮轮，仅配备一名随船医生与小型医务室，远不足以应对高致病性传染病的暴发。严重病例必须撤离至岸上医院。此次死亡事件暴露出邮轮在远洋航行中面对公共卫生危机的脆弱性。CDC与WHO随后呼吁全球邮轮业加强针对罕见病原体的监测和应对能力。'
+        },
+        {
+          heading: '疫情早期信号',
+          content: '首例死亡发生在疫情初期（4月下旬至月底），此时国际社会尚未广泛关注。5月初，随着更多病例的确诊和多国乘客的疏散，WHO、CDC等才陆续发布公告。Gavi（全球疫苗免疫联盟）、CIDRAP等机构随后回顾指出，首例死亡的时间线表明病毒的潜伏期可能较长，进一步印证了42天观察期的必要性。'
+        }
+      ],
+      source: '信息来源：BBC、CBS News、PBS、Gavi、The Asheville Citizen Times 等'
+    },
+
+    /* 2 — 4月27日: 第二例死亡 */
+    {
+      phase: '疫情暴发期 · 死亡病例',
+      title: '第二名乘客病危，紧急撤离南非后不治',
+      image: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=800&q=80',
+      imageAlt: '医院重症监护',
+      badges: [
+        { text: '第二例死亡', cls: 'modal-badge-red' },
+        { text: '紧急撤离', cls: 'modal-badge-red' },
+        { text: '南非', cls: 'modal-badge-red' }
+      ],
+      sections: [
+        {
+          heading: '紧急撤离经过',
+          content: '第二名死亡乘客在船上病情急剧恶化，被紧急转运至南非医院救治。尽管得到了岸上医疗资源的支持，但最终仍不治身亡。这是时间序列中的第二例死亡，进一步确认了安第斯病毒的高致死性。汉坦病毒肺综合征（HPS）的病死率通常为30-40%，安第斯株的致死率与此一致。'
+        },
+        {
+          heading: '国际反应升级',
+          content: '第二例死亡发生后，多国卫生部门开始密切关注此事件。WHO于5月初确认新增病例，并将此次疫情定性为需要国际关注的公共卫生事件。美国CDC发布了"2026年多国汉坦病毒聚集性疫情"官方公告。更多的国际媒体（路透社、美联社、BBC等）开始大范围报道。'
+        },
+        {
+          heading: '疫情趋势分析',
+          content: '截至4月底，已有至少8人出现症状、2人死亡。鉴于汉坦病毒潜伏期通常为1-8周（安第斯株最长可达45天），疫情可能仍处于早期阶段。后续将出现更多的继发病例。WHO警告各国卫生当局加强对下船旅客的追踪与监控。'
+        }
+      ],
+      source: '信息来源：BBC、Reuters、NPR、PBS、Healthline 等'
+    },
+
+    /* 3 — 5月2日前后: 第三例死亡 */
+    {
+      phase: '国际应对期 · 疫情升级',
+      title: '第三名乘客死亡：德国籍80岁男性',
+      image: 'https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&w=800&q=80',
+      imageAlt: '病毒研究实验室',
+      badges: [
+        { text: '第三例死亡', cls: 'modal-badge-amber' },
+        { text: 'WHO介入', cls: 'modal-badge-amber' },
+        { text: '国际关注', cls: 'modal-badge-amber' }
+      ],
+      sections: [
+        {
+          heading: '第三例死亡详情',
+          content: '第三名死亡乘客为德国籍，80岁男性，在船上死亡。由于当时邮轮已远离港口且多国对靠港持谨慎态度，遗体随船继续航行，未在中途港口下船，计划最终运至荷兰鹿特丹进行处理。至此累计已有3人死亡。'
+        },
+        {
+          heading: 'WHO正式介入',
+          content: 'WHO确认新增病例，并明确将此次事件定性为需要国际关注的邮轮聚集性疫情。WHO于5月7日举行的新闻发布会上强调："这是一次邮轮上的爆发，而不是另一个COVID-19。" WHO同时确认了至少5-8例确诊病例，警告各国这是一次"有限的"（limited）暴发，但要求所有受影响国家加强追踪。'
+        },
+        {
+          heading: '多国响应启动',
+          content: '截至此时，受影响的地区已包括美国多个州（佐治亚州、加利福尼亚州、亚利桑那州、内布拉斯加州、佛罗里达州等）、西班牙（特内里费岛）、瑞士、阿根廷（正在调查关联性）以及新加坡（进行追踪）。各国卫生当局竞相启动接触者追踪与医学观察程序，美国CDC发布多国汉坦病毒聚集性疫情公告。'
+        }
+      ],
+      source: '信息来源：WHO、CDC、CIDRAP、BBC、NBC News、PBS 等'
+    },
+
+    /* 4 — 5月初: 佛得角PCR检测 */
+    {
+      phase: '国际应对期 · 检测启动',
+      title: '佛得角首次开展PCR检测，高风险人员被疏散',
+      image: 'https://images.unsplash.com/photo-1566576727146-dc13cf714d38?auto=format&fit=crop&w=800&q=80',
+      imageAlt: '港口检疫',
+      badges: [
+        { text: 'PCR检测', cls: 'modal-badge-amber' },
+        { text: '佛得角', cls: 'modal-badge-amber' },
+        { text: '首批疏散', cls: 'modal-badge-amber' }
+      ],
+      sections: [
+        {
+          heading: '检测与疏散详情',
+          content: 'MV Hondius 号在航行至佛得角（Cabo Verde）时，首次开展了PCR检测。由于船上此前没有技术条件进行大规模筛查，检测仅针对高风险密切接触者及三名有症状乘客。检测结果为阳性的有症状者及密切接触者被疏散上岸，进行进一步隔离与治疗。无症状乘客继续随船航行。'
+        },
+        {
+          heading: '佛得角的角色',
+          content: '佛得角作为西非岛国，在此次国际公共卫生事件中扮演了关键的"检测前哨"角色。这是邮轮上第一次有能力进行分子检测，为后续国际响应提供了关键数据支撑。然而检测规模有限，无法覆盖全船152名乘员，意味着潜在的无症状感染者可能继续停留在船上。'
+        },
+        {
+          heading: '国际协调启动',
+          content: '检测结果触发了多国的紧急应对机制。各国开始为本国公民制定撤离计划，WHO与ECDC协调跨国追踪方案。CDC指出，由于安第斯病毒具有人际传播能力，无症状密接者存在传染他人的风险，必须进行严格隔离观察。各国建议的隔离期从21天到42天不等。'
+        }
+      ],
+      source: '信息来源：CDC、WHO、CIDRAP、Al Jazeera 等'
+    },
+
+    /* 5 — 5月6日: 零日 */
+    {
+      phase: '西班牙协调撤离期 · 关键节点',
+      title: '西班牙将5月6日定为接触追踪"零日"',
+      image: 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5ce?auto=format&fit=crop&w=800&q=80',
+      imageAlt: '全球卫生地图',
+      badges: [
+        { text: '零日', cls: 'modal-badge-blue' },
+        { text: '42天观察期', cls: 'modal-badge-blue' },
+        { text: '政治分歧', cls: 'modal-badge-blue' }
+      ],
+      sections: [
+        {
+          heading: '42天观察期起算',
+          content: '西班牙卫生部、WHO、ECDC及西班牙警报与卫生应急协调中心联合确定42天医学观察期，将5月6日定为"零日"（Day Zero）。42天的设定基于安第斯病毒最长潜伏期可达45天的科学依据，确保在观察期内能够覆盖所有潜在感染窗口。自此日起，所有撤离旅客和密切接触者进入严格的医学观察程序。'
+        },
+        {
+          heading: '政治分歧浮出水面',
+          content: '加那利群岛主席克拉维霍（Ángel Víctor Torres Clavijo）强烈反对邮轮靠港，声称自治区"无法接受"承载病毒风险的船只进入港口管辖范围。他担忧邮轮上可能存在受感染的啮齿动物，一旦上岸可能将传染病带入巴塔哥尼亚之外的欧洲领土。这一立场引发了地方与中央政府的严重对峙。'
+        },
+        {
+          heading: '科学论证与协调',
+          content: '面对政治压力，西班牙卫生部提交了详细书面报告：船上经兽医检查确认无鼠，且鼠类无法游泳登陆。WHO和六位独立专家共同证实了这一结论。西班牙首相桑切斯（Pedro Sánchez）亲自致电克拉维霍协调，最终在科学与政治之间达成平衡，为后续撤离铺平了道路。'
+        }
+      ],
+      source: '信息来源：西班牙卫生部、WHO、ECDC、Euronews 等'
+    },
+
+    /* 6 — 5月7日前后: 政治冲突 */
+    {
+      phase: '西班牙协调撤离期 · 政治博弈',
+      title: '加那利群岛与中央政府产生严重分歧',
+      image: 'https://images.unsplash.com/photo-1436491865332-7a61a109bb05?auto=format&fit=crop&w=800&q=80',
+      imageAlt: '航空医疗撤离',
+      badges: [
+        { text: '政治冲突', cls: 'modal-badge-blue' },
+        { text: '港口罢工威胁', cls: 'modal-badge-blue' },
+        { text: '首相介入', cls: 'modal-badge-blue' }
+      ],
+      sections: [
+        {
+          heading: '冲突核心',
+          content: '加那利群岛自治区主席克拉维霍要求中央政府全面禁止MV Hondius号靠港。他的核心担忧有三点：1) 船上可能存在携带病毒的啮齿动物；2) 病毒的潜在人际传播可能通过港口工作人员扩散；3) 加那利群岛作为旅游重镇，任何负面新闻都可能对当地经济造成致命打击。港口工人也发出了罢工威胁。'
+        },
+        {
+          heading: '中央政府的应对',
+          content: '西班牙首相桑切斯主动致电克拉维霍进行协调。卫生部提交书面报告，逐一驳斥了所有安全顾虑：船上经检查无鼠、鼠类无法游泳登陆、WHO和六位独立专家均已证实此结论。中央政府向自治区保证：所有撤离人员将通过"气泡转运"模式直接送往指定医院，全程不与港区接触。'
+        },
+        {
+          heading: '国际视角',
+          content: 'WHO、ECDC等多个国际组织对西班牙中央政府的决定表示支持，强调在公共卫生危机中，科学依据应当优先于地方政治考量。此次政治博弈为后续欧盟民事保护机制的启动创造了条件，也为其他国家处理类似事件提供了参考。'
+        }
+      ],
+      source: '信息来源：西班牙政府、WHO、BBC、NBC News、PBS 等'
+    },
+
+    /* 7 — 5月9日: 港口备港 */
+    {
+      phase: '西班牙协调撤离期 · 后勤准备',
+      title: '格拉纳迪亚港备港，14名西班牙乘客优先撤离',
+      image: 'https://images.unsplash.com/photo-1577412644983-87f05add769e?auto=format&fit=crop&w=800&q=80',
+      imageAlt: '港口停泊',
+      badges: [
+        { text: '备港', cls: 'modal-badge-blue' },
+        { text: '军用飞机', cls: 'modal-badge-blue' },
+        { text: '优先撤离', cls: 'modal-badge-blue' }
+      ],
+      sections: [
+        {
+          heading: '撤离计划',
+          content: '格拉纳迪亚港（Granadilla）位于特内里费岛南岸，是一座深水工业港。由于自治区主席的政治反对，邮轮不被允许直接靠港，而是在海岸外锚泊。撤离方式为：通过小艇（tender boat）将乘客分批转运至港口，再由专用车辆送往机场或医院。这一方案既满足了自治区"不靠港"的要求，又保障了撤离作业的安全。'
+        },
+        {
+          heading: '14名西班牙乘客优先撤离',
+          content: '14名西班牙籍乘客作为第一批撤离人员，由西班牙军用飞机率先转运至马德里戈麦斯·乌拉（Gómez Ulla）国防医院。这所医院是西班牙军方指定的一级传染病收治单位，具备全套负压隔离和BSL-3级实验室设施。14名乘客均无症状，但均被纳入42天隔离观察。此举是西班牙对其公民的优先保障，也是撤离物流的一次"压力测试"。'
+        },
+        {
+          heading: '国际后勤协调',
+          content: '与此同时，多国撤离的准备也在加快推进。美国、法国、澳大利亚、新西兰、英国、荷兰等国家的外交部与本国外交人员协调撤离计划。欧盟民事保护机制（ERCC）进入待命状态，多架包机和军用飞机开始在特内里费机场集结。'
+        }
+      ],
+      source: '信息来源：西班牙卫生部、Euronews、NBC News、Reuters 等'
+    },
+
+    /* 8 — 5月10日: 大规模撤离 */
+    {
+      phase: '西班牙协调撤离期 · 大规模行动',
+      title: '西班牙启动欧盟民事保护机制，94人完成撤离',
+      image: 'https://images.unsplash.com/photo-1587560699334-bea93391dcef?auto=format&fit=crop&w=800&q=80',
+      imageAlt: '医疗救援行动',
+      badges: [
+        { text: 'EU机制', cls: 'modal-badge-blue' },
+        { text: '94人撤离', cls: 'modal-badge-blue' },
+        { text: '新增确诊', cls: 'modal-badge-blue' }
+      ],
+      sections: [
+        {
+          heading: '欧盟民事保护机制',
+          content: '西班牙正式向欧盟请求启动民事保护机制（EU Civil Protection Mechanism, ERCC）。该机制汇集27个欧盟成员国及9个参与国的应急资源，提供医疗撤离、专家团队和物资支持。欧盟承担75%的行动费用。这是该机制首次用于汉坦病毒相关的跨国医疗撤离行动。'
+        },
+        {
+          heading: '撤离规模与执行',
+          content: '截至5月10日晚间，152名在船人员中已有94人（约62%）完成撤离。剩余的58名乘客和船员计划于次日（5月11日）全部撤离。超过23个国家的外交部门参与了本次撤离协调，成为冷战以来规模最大的邮轮医疗撤离行动之一。'
+        },
+        {
+          heading: '关键的确诊案例',
+          content: '法国：5名撤离乘客中1名女性在飞行途中出现症状，症状于夜间恶化，抵达巴黎后经PCR检测确诊阳性。其余4名检测阴性，但22名同机的密切接触者被要求隔离。\n\n美国：17名撤离公民中1人检测弱阳性，另1人出现轻微症状；两人均被安置在飞机上的生物隔离单元（bio-containment unit）中，直接转运至内布拉斯加大学医学中心（全球仅有的几个具备最高等级隔离设施的民用医院之一）。'
+        }
+      ],
+      source: '信息来源：欧盟委员会、法国卫生部、CDC、NBC News、CNN、BBC 等'
+    },
+
+    /* 9 — 5月11日凌晨: 强制靠港 */
+    {
+      phase: '收尾期 · 强制靠港',
+      title: '因恶劣天气，中央政府下令强制靠港',
+      image: 'https://images.unsplash.com/photo-1548574505-5e239809ee19?auto=format&fit=crop&w=800&q=80',
+      imageAlt: '邮轮在暴风雨中',
+      badges: [
+        { text: '强制靠港', cls: 'modal-badge-green' },
+        { text: '恶劣天气', cls: 'modal-badge-green' },
+        { text: '荷兰包机', cls: 'modal-badge-green' }
+      ],
+      sections: [
+        {
+          heading: '天气迫使决策变更',
+          content: '5月11日凌晨，加那利群岛海域遭遇恶劣海况，浪高超过3米，风速超过40节。原先计划的锚地小艇转运方案被安全评估为"不可执行"。西班牙商船总局（Dirección General de la Marina Mercante）援引"船上需医疗援助及天气安全风险"的法定条款，下令邮轮强制靠泊格拉纳迪亚港。这是整个事件中邮轮首次直接靠港。'
+        },
+        {
+          heading: '政治态度的转变',
+          content: '面对不可抗力，加那利群岛主席克拉维霍作出了"服从中央决定"的表态，未再提出反对。这一刻标志着科学、安全与国际义务最终战胜了地方政治顾虑。商船总局的强制令为确保剩余乘客的安全撤离提供了关键支撑——在恶劣天气下继续锚地作业可能导致人员伤亡。'
+        },
+        {
+          heading: '国际撤离调整',
+          content: '原定由澳大利亚政府派出的包机因技术故障取消。在紧急协调下，荷兰包机合并接走22名乘客，包括澳大利亚、新西兰和英国公民。荷兰政府由此在撤离行动中承担了额外的角色——不仅负责本国公民，还为英联邦国家的公民提供了"顺风机"。这一灵活的国际协作展示了全球公共卫生应对的合作精神。'
+        }
+      ],
+      source: '信息来源：西班牙商船总局、BBC、Reuters、NBC News 等'
+    },
+
+    /* 10 — 5月11日下午: 西班牙首例阳性 */
+    {
+      phase: '收尾期 · 新增确诊',
+      title: '西班牙PCR阳性确认；阿根廷排除乌斯怀亚起源',
+      image: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=800&q=80',
+      imageAlt: 'PCR检测实验室',
+      badges: [
+        { text: 'PCR阳性', cls: 'modal-badge-green' },
+        { text: '西班牙首例', cls: 'modal-badge-green' },
+        { text: '起源排除', cls: 'modal-badge-green' }
+      ],
+      sections: [
+        {
+          heading: '西班牙首例确诊',
+          content: '送往戈麦斯·乌拉国防医院的14名西班牙撤离者中，1人首次PCR检测结果为汉坦病毒阳性（暂定）。这名确诊病例此前在邮轮上未表现明显症状，属于无症状感染者。此案例进一步证实了安第斯病毒的无症状传播可能性，对国际追踪与隔离策略提出了更高要求。医院立即启动了全封闭隔离程序和接触者追踪。'
+        },
+        {
+          heading: '阿根廷排除乌斯怀亚起源',
+          content: '阿根廷官方基于流行病学调查数据，正式排除了火地岛乌斯怀亚（Ushuaia）为疫情源头。排除依据为：所有已知病例的潜伏期计算均无法在乌斯怀亚的停留时间内完成病毒暴露。新的溯源假说指向巴塔哥尼亚北部地区，该地区距乌斯怀亚约1500公里，有安第斯株汉坦病毒的已知动物宿主（长尾侏儒鼠 / Oligoryzomys longicaudatus）。'
+        },
+        {
+          heading: '科学意义',
+          content: '阿根廷的溯源结论具有重要的科学和防疫意义：它缩小了病毒起源的地理范围，有助于各国集中监测力量；它澄清了火地岛不存在本地疫情，避免了该地区错遭贸易和旅游限制。智利卫生部也开始在该地区展开联合调查，共同追踪安第斯株的动物宿主分布。'
+        }
+      ],
+      source: '信息来源：西班牙卫生部、阿根廷卫生部、CIDRAP、Al Jazeera 等'
+    },
+
+    /* 11 — 5月11日晚间: 撤离完成 */
+    {
+      phase: '收尾期 · 行动结束',
+      title: '"任务完成"——最后28名乘客下船，邮轮驶离',
+      image: 'https://images.unsplash.com/photo-1566576727146-dc13cf714d38?auto=format&fit=crop&w=800&q=80',
+      imageAlt: '港口夜间作业',
+      badges: [
+        { text: '任务完成', cls: 'modal-badge-green' },
+        { text: '122人撤离', cls: 'modal-badge-green' },
+        { text: '23+国', cls: 'modal-badge-green' }
+      ],
+      sections: [
+        {
+          heading: '撤离总览',
+          content: '5月11日晚间，最后28名乘客安全下船。至此，全部122名乘员（87名乘客 + 35名船员）撤离完毕，分散至超过23个国家各自回国。撤离行动从启动到完成用时约48小时，涉及超过23个国家的外交协调、多架军用及民用包机、多所指定传染病医院的收治准备。这是冷战以来规模最大的邮轮医疗撤离行动。'
+        },
+        {
+          heading: '邮轮后续处理',
+          content: 'MV Hondius号携带27名自愿留守船员及1名WHO驻船医生，驶往荷兰鹿特丹港进行彻底消毒。消毒方案由WHO与荷兰公共卫生与环境研究院（RIVM）联合制定，涵盖整船表面消毒、通风系统清洗、以及长达14天的"空船静置期"。格拉纳迪亚港区同步进行清洁消毒。'
+        },
+        {
+          heading: '后续政治承诺',
+          content: '西班牙首相桑切斯宣布将于5月26日与WHO总干事谭德塞（Dr. Tedros Adhanom Ghebreyesus）在日内瓦召开联合新闻发布会，全面公布此次事件的调查报告和公共卫生教训。会议预计将讨论全球邮轮业针对罕见病原体的监测与应对能力建设、以及安第斯病毒人际传播的防控指南。'
+        }
+      ],
+      source: '信息来源：西班牙政府、WHO、BBC、France 24、Welcome to the United Nations 等'
+    },
+
+    /* 12 — 5月12日: WHO定性 */
+    {
+      phase: '持续监测期 · 风险评估',
+      title: '新增3例阳性，WHO定性为"有限爆发"',
+      image: 'https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?auto=format&fit=crop&w=800&q=80',
+      imageAlt: '全球公共卫生响应',
+      badges: [
+        { text: '+3确诊', cls: 'modal-badge-purple' },
+        { text: 'WHO定性', cls: 'modal-badge-purple' },
+        { text: '低风险', cls: 'modal-badge-purple' }
+      ],
+      sections: [
+        {
+          heading: '最新病例动态',
+          content: '随着最后一批乘客离开邮轮，又有3人检测呈阳性。结合早期报道中的5例确诊（至少8人患病），累计确诊病例持续动态变化。由于安第斯病毒潜伏期最长可达45天，预计未来数周内仍可能陆续出现与此次邮轮相关的继发病例。各国的追踪与检测工作仍在进行中。'
+        },
+        {
+          heading: 'WHO风险评估',
+          content: 'WHO明确重申：对全球公众的风险为"低"。此次疫情是局限在特定邮轮上的聚集性事件，广泛传播的风险极低。WHO总干事发言人称："这不同于COVID-19——我们在源头就已经控制住了传播链，各国卫生系统有充分的时间和资源进行响应。"\n\n对邮轮乘客及密切接触者的风险为"中等至高"。鉴于安第斯病毒的人际传播能力和较高的病死率，与确诊病例有过密切接触的人员面临显著感染风险。'
+        },
+        {
+          heading: '各国追踪进展',
+          content: '美国：17名撤离公民已在内布拉斯加大学医学中心完成隔离安置。\n\n西班牙：42天观察期（至6月17日）仍在进行中。\n\n法国：22名密接者在巴黎隔离。\n\n瑞士：确认1例新增病例。\n\n新加坡、阿根廷等国家继续追踪中。'
+        }
+      ],
+      source: '信息来源：WHO、CDC、CIDRAP、BBC、CBS News、Al Jazeera 等'
+    },
+
+    /* 13 — 5月12日之后: 长期追踪 */
+    {
+      phase: '持续监测期 · 未来展望',
+      title: '多国进入长期医学观察阶段',
+      image: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=800&q=80',
+      imageAlt: '医学研究',
+      badges: [
+        { text: '长期追踪', cls: 'modal-badge-purple' },
+        { text: '42天', cls: 'modal-badge-purple' },
+        { text: '唯一人传人株', cls: 'modal-badge-purple' }
+      ],
+      sections: [
+        {
+          heading: '持续监测与隔离',
+          content: '各国对撤离人员实施不同程度的隔离观察：西班牙严格执行42天医学观察（至6月17日），这是全球最严格的隔离标准；其余国家建议至少21天。由于汉坦病毒安第斯株最长潜伏期可达45天，后续可能持续出现新确诊病例——即使所有撤离人员已按规定隔离。'
+        },
+        {
+          heading: '安第斯病毒的独特性',
+          content: '安第斯病毒（Andes virus）是已知唯一能通过人际传播的汉坦病毒株。这一特性使得此次疫情在防控上与传统汉坦病毒暴发有本质区别：无症状感染者可能在不知情的情况下传播病毒，传统的"阻断鼠类接触"策略不足以完全控制疫情。多国卫生部门已将此次事件作为"有限空间人际传播"的经典案例输入全球流行病学数据库。'
+        },
+        {
+          heading: '行业影响与展望',
+          content: '此次事件将促使全球邮轮业和港口卫生检疫部门全面升级针对汉坦病毒等罕见病原体的监测和应对能力。WHO与CDC预计将在未来数月内联合发布更新版的《邮轮传染病防控指南》，新增汉坦病毒的专项条款。美国CDC、CIDRAP与多所大学也在评估是否有必要加速安第斯病毒疫苗的研发。'
+        }
+      ],
+      source: '信息来源：WHO、CDC、CIDRAP、UC Davis Health、NPR、BBC 等'
+    },
+
+    /* 14 — Summary: 3人死亡 */
+    {
+      phase: '数据统计 · 死亡病例',
+      title: '确认死亡人数：3人',
+      image: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=800&q=80',
+      imageAlt: '医院统计面板',
+      badges: [
+        { text: '3人死亡', cls: 'modal-badge-red' },
+        { text: '病死率', cls: 'modal-badge-red' },
+        { text: '人口统计', cls: 'modal-badge-red' }
+      ],
+      sections: [
+        {
+          heading: '死亡病例详情',
+          content: '本次MV Hondius号汉坦病毒暴发共导致3人死亡，具体信息如下：\n\n第一例：荷兰籍，70岁男性。死亡日期：4月24日。遗体在圣赫勒拿岛（Saint Helena）港口下船。\n\n第二例：国籍未公开。死亡日期：4月27日。因病情急剧恶化，被紧急转运至南非医院救治，仍不治身亡。\n\n第三例：德国籍，80岁男性。死亡日期：5月2日前后。在船上死亡，遗体随船继续航行，计划运至荷兰鹿特丹。'
+        },
+        {
+          heading: '病死率分析',
+          content: '汉坦病毒肺综合征（HPS）的总体病死率通常约为30-40%。安第斯病毒（Andes virus）的致死率在此范围内。本次邮轮暴发中，3例死亡相对于已知确诊病例（至少8例确诊 + 更多疑似），病死率与此前的流行病学数据基本一致。\n\n需注意：由于无症状感染者的存在，真实的感染人数可能高于确诊病例数，因此实际感染致死率（IFR）可能低于当前观察到的病死率（CFR）。'
+        },
+        {
+          heading: '年龄与风险因素',
+          content: '已知的两例死亡病例年龄分别为70岁和80岁，属于高龄群体。这与汉坦病毒肺综合征的已知风险因素一致：年龄越大，出现重症和死亡的风险越高。\n\n其他已知风险因素包括：基础疾病（如慢性肺病、心血管疾病、免疫抑制状态）、延迟就医等。邮轮上有限的医疗条件也加剧了重症患者的救治难度。'
+        }
+      ],
+      source: '信息来源：BBC、CBS News、NBC News、PBS、Reuters 等'
+    },
+
+    /* 15 — Summary: 122人撤离 */
+    {
+      phase: '数据统计 · 撤离行动',
+      title: '成功撤离人员：122人',
+      image: 'https://images.unsplash.com/photo-1436491865332-7a61a109bb05?auto=format&fit=crop&w=800&q=80',
+      imageAlt: '航空撤离行动',
+      badges: [
+        { text: '122人撤离', cls: 'modal-badge-green' },
+        { text: '多国联动', cls: 'modal-badge-green' },
+        { text: '48小时', cls: 'modal-badge-green' }
+      ],
+      sections: [
+        {
+          heading: '撤离人员构成',
+          content: '总计122名乘员成功撤离MV Hondius号邮轮，构成如下：\n\n87名乘客：来自超过23个国家，包括西班牙（14人）、美国（17人）、法国（5人）、澳大利亚、新西兰、英国、荷兰、瑞士、德国等。\n\n35名船员：随船工作的船员在全部撤离后，部分就地解散回国，部分协助邮轮驶往鹿特丹。\n\n此外，27名自愿留守船员与1名WHO驻船医生继续随船航行。'
+        },
+        {
+          heading: '撤离时间线',
+          content: '5月9日（周六）：格拉纳迪亚港备港。14名西班牙乘客由军用飞机率先撤至马德里戈麦斯·乌拉国防医院。\n\n5月10日（周日）：大规模撤离启动。西班牙启动欧盟民事保护机制（ERCC），欧盟承担75%费用。截至当日，152名在船人员中已有94人完成撤离。\n\n5月11日（周一）：最后28名乘客下船。全部撤离行动在约48小时内完成。'
+        },
+        {
+          heading: '隔离与医学观察',
+          content: '撤离人员根据各国规定接受隔离观察：\n\n西班牙：42天严格医学观察（至6月17日），收治于戈麦斯·乌拉国防医院。\n\n美国：17名公民转运至内布拉斯加大学医学中心，该中心是全球少数具备最高等级生物隔离设施的民用医院之一。\n\n法国：22名密切接触者在巴黎进行隔离。\n\n其他国家：建议至少21天医学观察。\n\n撤离过程中出现的阳性案例：法国1名女性在飞行途中出现症状、美国1人弱阳性+1人轻微症状。'
+        }
+      ],
+      source: '信息来源：西班牙卫生部、欧盟委员会、CDC、NBC News、BBC 等'
+    },
+
+    /* 16 — Summary: 23+国 */
+    {
+      phase: '数据统计 · 国际影响',
+      title: '涉及国家：超过23个',
+      image: 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5ce?auto=format&fit=crop&w=800&q=80',
+      imageAlt: '全球卫生合作地图',
+      badges: [
+        { text: '23+国', cls: 'modal-badge-purple' },
+        { text: '多国追踪', cls: 'modal-badge-purple' },
+        { text: '全球响应', cls: 'modal-badge-purple' }
+      ],
+      sections: [
+        {
+          heading: '受影响国家列表',
+          content: '此次多国汉坦病毒聚集性疫情涉及的国家和地区包括：\n\n确认有病例的国家：美国、西班牙、法国、瑞士、阿根廷（调查关联性中）。\n\n参与追踪与隔离的国家：新加坡、荷兰、英国、澳大利亚、新西兰、德国等。\n\n提供检测与中转支持的国家：佛得角（首次PCR检测）、南非（第二例死亡转运）、圣赫勒拿岛（英国海外领土，首例遗体下船）。\n\nWHO、ECDC、PAHO等国际组织全程协调。'
+        },
+        {
+          heading: '国际响应机制',
+          content: 'WHO：于5月7日确认疫情并定性为"邮轮上的有限暴发"，明确表示"不是另一个COVID-19"。WHO在格拉纳迪亚港派驻了现场协调团队。\n\nCDC：发布了"2026年多国汉坦病毒聚集性疫情"官方公告，指导美国各州（佐治亚州、加利福尼亚州、亚利桑那州、内布拉斯加州、佛罗里达州等）开展监测。\n\nEU民事保护机制（ERCC）：首次用于汉坦病毒相关撤离，汇集27个成员国及9个参与国的资源。\n\nCIDRAP、Gavi等学术/非营利机构提供专业分析与媒体沟通支持。'
+        },
+        {
+          heading: '公共卫生意义',
+          content: '此次事件是冷战以来规模最大的邮轮医疗撤离行动之一，涉及超过23个国家的外交协调。它展示了：\n\n1. 全球公共卫生体系对罕见病原体的快速响应能力。\n\n2. 安第斯病毒人际传播特性的科学确认对国际追踪策略的指导意义。\n\n3. 邮轮作为"微型国际社区"在传染病暴发中的独特角色，促使全球邮轮业和港口检疫部门全面升级针对罕见病原体的监测应对能力。\n\n此次事件将被多个国际组织收录为公共卫生应对的经典案例。'
+        }
+      ],
+      source: '信息来源：WHO、CDC、ECDC、CIDRAP、Al Jazeera、CNN、BBC 等'
+    }
+  ];
+
+  /* ===== Modal Functions ===== */
+  function openModal(index) {
+    const data = modalData[index];
+    if (!data) return;
+
+    // Set header
+    modalPhase.textContent = data.phase;
+    modalTitle.textContent = data.title;
+
+    // Build body
+    let html = '';
+    
+    // Image
+    if (data.image) {
+      html += '<img class="modal-img" src="' + data.image + '" alt="' + (data.imageAlt || '') + '" loading="lazy" onerror="this.style.display=\'none\'">';
+    }
+
+    // Badges
+    if (data.badges && data.badges.length > 0) {
+      html += '<div style="margin-bottom:16px;">';
+      data.badges.forEach(b => {
+        html += '<span class="modal-badge ' + b.cls + '">' + b.text + '</span>';
+      });
+      html += '</div>';
+    }
+
+    // Sections
+    if (data.sections && data.sections.length > 0) {
+      data.sections.forEach(s => {
+        html += '<div class="modal-section">';
+        html += '<h4>' + s.heading + '</h4>';
+        // Handle paragraphs with newlines
+        const paragraphs = s.content.split('\n\n');
+        paragraphs.forEach(p => {
+          if (p.trim()) {
+            html += '<p>' + p.trim().replace(/\n/g, '<br>') + '</p>';
+          }
+        });
+        html += '</div>';
+      });
+    }
+
+    // Source
+    if (data.source) {
+      html += '<div class="modal-source">' + data.source + '</div>';
+    }
+
+    modalBody.innerHTML = html;
+    modalBody.scrollTop = 0;
+
+    // Show overlay
+    modalOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    // Focus trap: focus the close button
+    setTimeout(() => {
+      document.getElementById('modal-close').focus();
+    }, 100);
+  }
+
+  function closeModal() {
+    modalOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  // Close button
+  modalClose.addEventListener('click', closeModal);
+
+  // Click overlay backdrop to close
+  modalOverlay.addEventListener('click', function(e) {
+    if (e.target === modalOverlay) {
+      closeModal();
+    }
+  });
+
+  // Escape key to close
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+      closeModal();
+    }
+  });
+
+  // Bind click events to all timeline cards with data-modal-index
+  document.querySelectorAll('.tl-card[data-modal-index]').forEach(card => {
+    card.addEventListener('click', function() {
+      const idx = parseInt(this.getAttribute('data-modal-index'), 10);
+      openModal(idx);
+    });
+  });
+
+  // Bind click events to summary items
+  document.querySelectorAll('.summary-item[data-modal-index]').forEach(item => {
+    item.addEventListener('click', function(e) {
+      // Don't trigger if user is selecting text
+      if (window.getSelection().toString()) return;
+      const idx = parseInt(this.getAttribute('data-modal-index'), 10);
+      openModal(idx);
     });
   });
 </script>
